@@ -45,6 +45,7 @@
 #include <QtCore/QTimer>
 #include <QStackedLayout>
 #include <QStatusBar>
+#include <QPaintEvent>
 
 static toSQL SQLVSQLChildSel("toResultPlan:VSQLChildSel",
                              "SELECT distinct to_char(child_number)||' ('||to_char(plan_hash_value)||')' cn_disp, child_number, sql_id, plan_hash_value\n"
