@@ -43,6 +43,7 @@ OPTION(TEST_APP6 "simple application parser" OFF)
 #Require 2.8 for svnversion
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.11 FATAL_ERROR) # qt5 requirement
 CMAKE_POLICY(SET CMP0046 OLD) # The dependency target "revisiontag" of target "tora" does not exist
+CMAKE_POLICY(SET CMP0042 OLD) # MACOSX_RPATH
 
 #Pretty colors
 SET(CMAKE_COLOR_MAKEFILE ON)
@@ -124,8 +125,8 @@ SET(PLUGIN_PERMISSIONS WORLD_EXECUTE GROUP_EXECUTE OWNER_EXECUTE WORLD_READ GROU
 ########## check for the CPU we build for                                                           ##########
 
 IF (CMAKE_COMPILER_IS_GNUCC)
-  SET(CMAKE_CXX_FLAGS_DEBUG   "-O0 -fno-inline")
-  SET(CMAKE_C_FLAGS_DEBUG     "-O0 -fno-inline")
+  SET(CMAKE_CXX_FLAGS_DEBUG   "-O0 -fno-inline -rdynamic")
+  SET(CMAKE_C_FLAGS_DEBUG     "-O0 -fno-inline -rdynamic")
   SET(CMAKE_CXX_FLAGS_RELEASE "-O2")
   SET(CMAKE_C_FLAGS_RELEASE   "-O2")
   SET(CMAKE_CXX_FLAGS         "-Wall -std=c++11 -ggdb3")
@@ -140,7 +141,7 @@ IF (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   SET(CMAKE_C_FLAGS_RELEASE   "-O2")
   SET(CMAKE_CXX_FLAGS         "-Wall -std=c++11 -ggdb3")
   SET(CMAKE_C_FLAGS           "-Wall            -ggdb3")
-ENDIF(APPLE)
+ENDIF()
 
 #Convert our simpler command line option to the CMake style
 #None, Debug, Release, .. or custom ones

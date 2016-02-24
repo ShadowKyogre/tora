@@ -11,7 +11,7 @@ if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
   cmake_policy(SET CMP0005 NEW)
 endif(COMMAND cmake_policy)
-
+CMAKE_POLICY(SET CMP0042 OLD) # MACOSX_RPATH
 
 #Pretty colors
 SET(CMAKE_COLOR_MAKEFILE ON)

@@ -125,8 +125,8 @@ QSet<QString> const toOracleInstantFinder::m_paths = QSet<QString>()
 QList<QString> const toOracleInstantFinder::m_libname = QList<QString>()
 #if defined(Q_OS_LINUX)
         << QString::fromLatin1("libclntsh.so*")
-#elif defined(Q_WS_MAC)
-        << QString::fromLatin1("libclntsh.*dylib")
+#elif defined(Q_OS_MAC)
+        << QString::fromLatin1("libclntsh.dylib*")
 #elif defined(Q_OS_WIN32) // Note both 32 and 64 bit build
         << QString::fromLatin1("OCI.dll")
 #endif
@@ -328,7 +328,7 @@ void toOracleInstantFinder::setEnv(ConnectionProvirerParams const &params)
 void toOracleInstantFinder::loadLib(ConnectionProvirerParams const &params)
 {
     QFileInfo libPath(params.value("LIBPATH").toString());
-#ifdef Q_OS_WIN32
+#if defined(Q_OS_WIN32)
     TLOG(5, toNoDecorator, __HERE__) << "Loading:" << libPath.absoluteFilePath() << std::endl;
     Utils::toLibrary::LHandle hmoduleOCI = Utils::toLibrary::loadLibrary(libPath);
     if ( hmoduleOCI)
@@ -345,8 +345,27 @@ void toOracleInstantFinder::loadLib(ConnectionProvirerParams const &params)
         TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
     else
         TLOG(5, toNoDecorator, __HERE__) << "Failed" << std::endl;
-
+//#elsif defined(Q_OS_OSX)
 #else
+    TLOG(5, toNoDecorator, __HERE__) << "Loading:" << libPath.absoluteFilePath() << std::endl;
+    Utils::toLibrary::LHandle hmoduleOCI = Utils::toLibrary::loadLibrary(libPath);
+    if ( hmoduleOCI)
+        TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
+    
+    TLOG(5, toNoDecorator, __HERE__) << "Loading: " TROTL_LIB  << std::endl;
+    Utils::toLibrary::LHandle hmoduleTrotl = Utils::toLibrary::loadLibrary(QFileInfo(TROTL_LIB));
+    if ( hmoduleTrotl)
+        TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
+    
+    TLOG(5, toNoDecorator, __HERE__) << "Loading: " PROVIDER_LIB << std::endl;
+    Utils::toLibrary::LHandle hmodulePOracle = Utils::toLibrary::loadLibrary(QFileInfo(PROVIDER_LIB));
+    if ( hmodulePOracle)
+        TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
+    else
+        TLOG(5, toNoDecorator, __HERE__) << "Failed" << std::endl;
+//#else
+#endif
+#if 0
     /* Steps to load libclntsh.so on Linux
     All these approaches fail:
     - setenv("LD_LIBRARY_PATH", ..);
