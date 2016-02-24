@@ -784,8 +784,8 @@ IF(USE_EXPERIMENTAL)
   LIST(APPEND TORA_LIBS antlr3c)
 ENDIF(USE_EXPERIMENTAL)
 
-SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-SET(CMAKE_INSTALL_RPATH "$ORIGIN/:$$ORIGIN/")
+##SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+##SET(CMAKE_INSTALL_RPATH "$ORIGIN/:$$ORIGIN/")
 
 # The main executable
 ADD_EXECUTABLE(${EXE_NAME} ${GUI_TYPE}
@@ -1139,7 +1139,7 @@ ENDIF(TORA_DEBUG AND TEST_APP6)
 ADD_DEFINITIONS("-DTROTL_DLL")
 IF(ORACLE_FOUND)
   SET(PROVIDER_ORACLE "poracle")
-  ADD_LIBRARY(${PROVIDER_ORACLE} SHARED 
+  ADD_LIBRARY(${PROVIDER_ORACLE} MODULE
   	"connection/tooracleprovider.cpp" 
   	"connection/tooracletraits.cpp" 
 	"connection/tooracleconnection.cpp" 
@@ -1154,7 +1154,20 @@ IF(ORACLE_FOUND)
   ELSE()
     ADD_DEPENDENCIES(${PROVIDER_ORACLE} ${EXE_NAME})
   ENDIF()
-  MESSAGE(STATUS "${PROVIDER_ORACLE} ${ORACLE_LIBRARIES} ${QT_LIBRARIES} ${TORA_LIB} trotl") 
+
+  get_target_property(existing_link_flags ${PROVIDER_ORACLE} LINK_FLAGS)
+  if(existing_link_flags)
+    # TODO resolve abs path to TOra
+    # set(new_link_flags " ${existing_link_flags} -bundle_loader ${EXE_NAME} ")    
+    set(new_link_flags "${existing_link_flags} -undefined dynamic_lookup ")
+  else()
+    # TODO resolve abs path to TOra
+    # set(new_link_flags " -bundle_loader ${EXE_NAME} ")
+    set(new_link_flags " -undefined dynamic_lookup ")
+  endif()
+  set_target_properties(${PROVIDER_ORACLE} PROPERTIES LINK_FLAGS ${new_link_flags})
+  MESSAGE(STATUS "${PROVIDER_ORACLE} ${new_link_flags}")
+  MESSAGE(STATUS "${PROVIDER_ORACLE} ${ORACLE_LIBRARIES} ${QT_LIBRARIES} ${TORA_LIB} trotl")
 ENDIF(ORACLE_FOUND)
 
 # Teradata connection provider
