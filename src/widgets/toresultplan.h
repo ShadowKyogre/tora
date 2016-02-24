@@ -39,6 +39,7 @@
 
 #include <QTreeView>
 
+class QPlainTextEdit;
 class toEventQuery;
 class toResultCombo;
 class toWorkingWidget;
@@ -58,7 +59,7 @@ public:
 		Explain   = 10,
 		XPLAN = 20,
 	};
-
+	
 	bool Ready;
 	toWorkingWidget* Working;
 
