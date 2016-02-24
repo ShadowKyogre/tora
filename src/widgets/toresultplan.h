@@ -34,6 +34,8 @@
 
 #pragma once
 
+#include "loki/Singleton.h"
+
 #include "widgets/topushbutton.h"
 #include "core/toresult.h"
 

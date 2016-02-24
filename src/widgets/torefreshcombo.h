@@ -4,7 +4,7 @@
 
 class toRefreshCombo : public QComboBox
 {
-    QObject
+	Q_OBJECT
 public:
 	explicit toRefreshCombo(QWidget *parent, const QString& def = QString());
 
