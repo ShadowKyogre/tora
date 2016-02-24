@@ -58,7 +58,7 @@
 #elif defined(Q_OS_WIN32)
 #   define PROVIDER_LIB "poracle.dll"
 #   define TROTL_LIB    "trotl.dll"
-#elif defined(Q_WS_MAC)
+#elif defined(Q_OS_MAC)
 #   define PROVIDER_LIB "libporacle.dylib"
 #   define TROTL_LIB    "libtrotl.dylib"
 #endif

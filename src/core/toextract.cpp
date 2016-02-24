@@ -1001,8 +1001,8 @@ std::list<toExtract::columnInfo> toExtract::parseColumnDescription(std::list<QSt
         }
         begin++;
     }
-
+#ifndef __APPLE__
     ret.sort();
-
+#endif
     return ret;
 }
