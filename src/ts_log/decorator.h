@@ -291,7 +291,7 @@ protected:
 #if (defined _MSC_VER) && (_MSC_VER <= 1800)
 		__declspec(thread) static long long time;
 #elif (	defined __APPLE__)
-#pragma message WARN("TODO/FIXME: deprecated!")
+#pragma message WARN("TODO/FIXME: thred local storage on OSX")
         long long time;
 #else
 		thread_local static long long time;
