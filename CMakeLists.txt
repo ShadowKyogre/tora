@@ -133,8 +133,8 @@ IF (CMAKE_COMPILER_IS_GNUCC)
 ENDIF (CMAKE_COMPILER_IS_GNUCC)
 
 IF (APPLE)
-  SET(CMAKE_CXX_FLAGS_DEBUG   "-O0 -fno-inline -rdynamic")
-  SET(CMAKE_C_FLAGS_DEBUG     "-O0 -fno-inline -rdynamic")
+  SET(CMAKE_CXX_FLAGS_DEBUG   "-O0 -fno-inline")
+  SET(CMAKE_C_FLAGS_DEBUG     "-O0 -fno-inline")
   SET(CMAKE_CXX_FLAGS_RELEASE "-O2")
   SET(CMAKE_C_FLAGS_RELEASE   "-O2")
   SET(CMAKE_CXX_FLAGS         "-Wall -std=c++11 -ggdb3")
@@ -203,7 +203,9 @@ IF(QT5_BUILD)
   find_package(Qt5Sql REQUIRED)
   find_package(Qt5Widgets REQUIRED)
   find_package(Qt5Xml REQUIRED)
-  find_package(Qt5MacExtras REQUIRED)
+  IF(APPLE)
+    find_package(Qt5MacExtras REQUIRED)
+  ENDIF()
   set(QT_INCLUDES
     ${Qt5Core_INCLUDE_DIRS}	  
     ${Qt5Gui_INCLUDE_DIRS}
@@ -212,7 +214,9 @@ IF(QT5_BUILD)
     ${Qt5Sql_INCLUDE_DIRS}
     ${Qt5Widgets_INCLUDE_DIRS}
     ${Qt5Xml_INCLUDE_DIRS}
-    ${Qt5MacExtras_INCLUDE_DIRS}
+    IF(APPLE)    
+      ${Qt5MacExtras_INCLUDE_DIRS}
+    ENDIF()
   )
   include_directories(${QT_INCLUDES})
   SET(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
