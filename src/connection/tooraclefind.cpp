@@ -40,6 +40,7 @@
 #include "core/toglobalconfiguration.h"
 #include "core/toconf.h"
 
+#include <QtGlobal>
 #include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QList>
@@ -59,7 +60,7 @@
 #   define PROVIDER_LIB "poracle.dll"
 #   define TROTL_LIB    "trotl.dll"
 #elif defined(Q_OS_MAC)
-#   define PROVIDER_LIB "libporacle.dylib"
+#   define PROVIDER_LIB "libporacle.so"
 #   define TROTL_LIB    "libtrotl.dylib"
 #endif
 
@@ -345,34 +346,27 @@ void toOracleInstantFinder::loadLib(ConnectionProvirerParams const &params)
         TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
     else
         TLOG(5, toNoDecorator, __HERE__) << "Failed" << std::endl;
-//#elsif defined(Q_OS_MAC)
+#elif defined(Q_OS_MAC)
+    // TODO (symlinks) of set DYLD_LIBRARY_PATH to Oracle instant client home
+    // ln -sf $ORACLE_HOME/libclntsh.dylib.11 ./
+    // ln -sf $ORACLE_HOME/libnnz11.dylib     ./
+    TLOG(5, toNoDecorator, __HERE__) << "Loading:" << "libclntsh.dylib.11.1" << std::endl;
+    Utils::toLibrary::LHandle hmoduleOCI = Utils::toLibrary::loadLibrary(QString("libclntsh.dylib.11.1"));
+    if ( hmoduleOCI)
+        TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
+    
+    TLOG(5, toNoDecorator, __HERE__) << "Loading: " TROTL_LIB  << std::endl;
+    Utils::toLibrary::LHandle hmoduleTrotl = Utils::toLibrary::loadLibrary(QFileInfo(TROTL_LIB));
+    if ( hmoduleTrotl)
+      TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
+    
+    TLOG(5, toNoDecorator, __HERE__) << "Loading: " PROVIDER_LIB << std::endl;
+    Utils::toLibrary::LHandle hmodulePOracle = Utils::toLibrary::loadLibrary(QFileInfo(PROVIDER_LIB));
+    if ( hmodulePOracle)
+      TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
+    else
+      TLOG(5, toNoDecorator, __HERE__) << "Failed" << std::endl;
 #else
-
-  QString ORACLE_HOME = libPath.absolutePath();
-  TLOG(5, toNoDecorator, __HERE__) << "Loading:" << ORACLE_HOME + "/" + "libnnz11.dylib"  << std::endl;
-  Utils::toLibrary::LHandle hmoduleNNZ = Utils::toLibrary::loadLibrary(libPath);
-  if ( hmoduleNNZ)
-    TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
-
-  TLOG(5, toNoDecorator, __HERE__) << "Loading:" << libPath.absoluteFilePath() << std::endl;
-  Utils::toLibrary::LHandle hmoduleOCI = Utils::toLibrary::loadLibrary(libPath);
-  if ( hmoduleOCI)
-    TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
-    
-  TLOG(5, toNoDecorator, __HERE__) << "Loading: " TROTL_LIB  << std::endl;
-  Utils::toLibrary::LHandle hmoduleTrotl = Utils::toLibrary::loadLibrary(QFileInfo(TROTL_LIB));
-  if ( hmoduleTrotl)
-    TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
-    
-  TLOG(5, toNoDecorator, __HERE__) << "Loading: " PROVIDER_LIB << std::endl;
-  Utils::toLibrary::LHandle hmodulePOracle = Utils::toLibrary::loadLibrary(QFileInfo(PROVIDER_LIB));
-  if ( hmodulePOracle)
-    TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
-  else
-    TLOG(5, toNoDecorator, __HERE__) << "Failed" << std::endl;
-//#else
-#endif
-#if 0
     /* Steps to load libclntsh.so on Linux
     All these approaches fail:
     - setenv("LD_LIBRARY_PATH", ..);
@@ -386,7 +380,7 @@ void toOracleInstantFinder::loadLib(ConnectionProvirerParams const &params)
       This succeeds, but further call to OCIEnvInit fails with: ORA-01804.
       For some courious reason Oracle client thinks, that it is a thick one and searches for "rdbms" subdir.
 
-    This approach works correctly:
+     This approach works correctly:
     - libtrotl.so has compiled in this library search path: "$ORIGIN/instantclient:$$ORIGIN/instantclient".
     - libtrotl.so has dependency on libclntsh.so.11.1.
     - ln -sf /opt/instantclient_11_1 ./instantclient
