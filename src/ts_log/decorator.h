@@ -292,7 +292,7 @@ protected:
 		__declspec(thread) static long long time;
 #elif (	defined __APPLE__)
 #pragma message WARN("TODO/FIXME: thread local storage on OSX")
-        long long time;
+        static long long time;
 #else
 	thread_local static long long time;
 #endif
