@@ -73,6 +73,7 @@ IF(GIT_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
   # creates gitrevision.h using cmake script
   ADD_CUSTOM_COMMAND(TARGET revisiontag COMMAND ${CMAKE_COMMAND}
   -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+  -DUSE_EXPERIMENTAL=${USE_EXPERIMENTAL}
   -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/getgit.cmake)
   ADD_DEFINITIONS("-DHAVE_GITREVISION_H=1")
 ENDIF()
@@ -93,7 +94,13 @@ ELSE (Boost_FOUND)
     MESSAGE(FATAL_ERROR "Boost libs not found.")
 ENDIF (Boost_FOUND)
 
-FILE(WRITE  ${CMAKE_BINARY_DIR}/toversion.h "#define TOVERSION \"${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}\"\n")
+FILE(WRITE  ${CMAKE_BINARY_DIR}/toversion.h "#define TOVERSION \"${VERSION}\"\n")
+IF (USE_EXPERIMENTAL)
+    FILE(APPEND ${CMAKE_BINARY_DIR}/toversion.h "#define TOBUILDTYPE \"Experimental\"\n")
+ELSE ()
+    FILE(APPEND ${CMAKE_BINARY_DIR}/toversion.h "#define TOBUILDTYPE \"Release\"\n")
+    FILE(APPEND ${CMAKE_BINARY_DIR}/toversion.h "#define TOBUILDTYPE_RELEASE \"Release\"\n") 
+ENDIF()
 
 SET (EXE_NAME "tora")
 IF (APPLE)
