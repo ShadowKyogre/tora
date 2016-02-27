@@ -350,22 +350,25 @@ void toOracleInstantFinder::loadLib(ConnectionProvirerParams const &params)
     // TODO (symlinks) of set DYLD_LIBRARY_PATH to Oracle instant client home
     // ln -sf $ORACLE_HOME/libclntsh.dylib.11 ./
     // ln -sf $ORACLE_HOME/libnnz11.dylib     ./
-    TLOG(5, toNoDecorator, __HERE__) << "Loading:" << "libclntsh.dylib.11.1" << std::endl;
-    Utils::toLibrary::LHandle hmoduleOCI = Utils::toLibrary::loadLibrary(QString("libclntsh.dylib.11.1"));
-    if ( hmoduleOCI)
-        TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
-    
-    TLOG(5, toNoDecorator, __HERE__) << "Loading: " TROTL_LIB  << std::endl;
-    Utils::toLibrary::LHandle hmoduleTrotl = Utils::toLibrary::loadLibrary(QFileInfo(TROTL_LIB));
-    if ( hmoduleTrotl)
-      TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
-    
+    // So far libtrotl is static and compiled into poracle.so, env. variable has to be set.
+    // export DYLD_LIBRARY_PATH=/Users/user115674/Documents/instantclient_11_2
+    // to load PROVIDER_LIB
+    // poracle.so should be in the same diretory as TOra binary
+    QDir installDir(QCoreApplication::applicationDirPath());
+    TLOG(5, toNoDecorator, __HERE__) << "Location: " << QCoreApplication::applicationDirPath() << std::endl;
+    QDir cwdDir(QDir::currentPath());
+    if( installDir != cwdDir)
+      installDir.cd(".");
+
     TLOG(5, toNoDecorator, __HERE__) << "Loading: " PROVIDER_LIB << std::endl;
+    TLOG(5, toNoDecorator, __HERE__) << "From: " << QDir::currentPath() << std::endl;
     Utils::toLibrary::LHandle hmodulePOracle = Utils::toLibrary::loadLibrary(QFileInfo(PROVIDER_LIB));
     if ( hmodulePOracle)
       TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
     else
       TLOG(5, toNoDecorator, __HERE__) << "Failed" << std::endl;
+
+    cwdDir.cd(".");
 #else
     /* Steps to load libclntsh.so on Linux
     All these approaches fail:
