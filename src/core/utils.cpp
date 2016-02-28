@@ -62,10 +62,11 @@
 #   include <windows.h>
 #endif
 
-#if defined(Q_OS_MACX)
+#if defined(Q_OS_MAC)
 #include <sys/param.h>
 //#include <CoreServices/CoreServices.h>
-#endif // Q_OS_MACX
+#include <dlfcn.h>
+#endif // Q_OS_MAC
 
 #if defined(__linux__)
 #include <sys/prctl.h>
@@ -867,6 +868,9 @@ namespace Utils
             return false;
 #endif
 
+#ifdef Q_OS_MAC
+	return dlopen_preflight(path.absoluteFilePath().toStdString().c_str());
+#endif
         return true;
     }
 
