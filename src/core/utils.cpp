@@ -869,7 +869,16 @@ namespace Utils
 #endif
 
 #ifdef Q_OS_MAC
-	return dlopen_preflight(path.absoluteFilePath().toStdString().c_str());
+	TLOG(5, toDecorator, __HERE__) << "Validating:" << path.absoluteFilePath() << std::endl;
+	bool retval = dlopen_preflight(path.absoluteFilePath().toStdString().c_str());
+	if (retval)
+	  TLOG(5, toNoDecorator, __HERE__) << "dlopen_preflight:" << path.absoluteFilePath() << " OK" << std::endl;
+	else
+	  TLOG(5, toNoDecorator, __HERE__) << "dlopen_preflight:" << path.absoluteFilePath() << std::endl
+					   << '\t' << dlerror() << std::endl;
+	// return OK regarless of dlopen_preflight return
+	// it returns OK only if fix_oralib.rb was run, or DYLD_LIBRARY_PATH is set
+	return true;
 #endif
         return true;
     }
